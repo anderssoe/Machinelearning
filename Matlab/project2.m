@@ -85,40 +85,60 @@ Error_test_nofeatures = nan(K,1);
 
  %% REGRESSION
  
- 
+
  
  %% Use ex_6_2_1.m for linear regression with forward selection
  run('ex6_2_1');
- 
+ run('LinearRegressionPlot.m')
  %% ANN
  run('ex8_2_6');
  
- 
  %% AVG Output
  %makes no sense
+
  
+ return;
+
  
 %% CLASSIFICATION
 % Try to classify the different vowels
+
+X = [X_TRAIN;X_TEST];
+y = [y_TRAIN;y_TEST];
+attributeNames = cellstr(["x.1", "x.2",	"x.3",	"x.4",	"x.5",	"x.6",	"x.7",	"x.8",	"x.9",	"x.10"]);
+
 %% Decision tree - missing 2layer
 
 % exercise 5.1.6
-minparent = [25 50 100]; % Minimum number of observations per branch before stopping
+minparent = [20 40 60 80 100]; % Minimum number of observations per branch before stopping
 
 % Fit classification tree
-for ii = 1:length(minparent);
+
+
+for k = 1:length(minparent);
     
     
-    T = fitctree(X, classNames(y+1), ...    
+    %T = fitctree(X, classNames(y+1), ...    
+    %    'splitcriterion', 'gdi', ...
+    %    'categorical', [], ...
+    %    'PredictorNames', attributeNames, ...
+    %    'prune', 'off', ...
+    %    'minparent', minparent(ii), ...
+    %    'CrossVal','on');
+
+
+
+    
+    T = fitctree(X, classNames(y+1), ...
         'splitcriterion', 'gdi', ...
         'categorical', [], ...
         'PredictorNames', attributeNames, ...
-        'prune', 'off', ...
-        'minparent', minparent(ii), ...
-        'CrossVal','on');
-
+        'prune', 'off', ... % What does prune do??
+        'minparent', minparent(ii));%, 'CrossVal','on');%, 'CrossVal','on');
     % View the tree
-    view(T, 'Mode','graph')
+    view(T, 'mode','graph')
+    cvmodel = crossval(T);
+    L = kfoldLoss(cvmodel);
 end
 
 %% K-nearest
