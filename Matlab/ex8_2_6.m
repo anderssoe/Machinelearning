@@ -4,13 +4,14 @@
 cdir = fileparts(mfilename('fullpath')); 
 
 % K-fold crossvalidation
-CV = cvpartition(N,'Kfold', K);
+%CV = cvpartition(N,'Kfold', K); %*** made in main
 
 % Parameters for neural network classifier
-NHiddenUnits = 8;  % Number of hidden units
-NTrain = 10; % Number of re-trains of neural network
+NHiddenUnits = [1 2 3 5 10];  % Number of hidden units
+NTrain = 5; % Number of re-trains of neural network
 
-
+besthidden = [];
+E_test = [];
 bestnet=cell(K,1);
 
 for k = 1:K % For each crossvalidation fold
@@ -25,8 +26,12 @@ for k = 1:K % For each crossvalidation fold
     % Fit neural network to training set
     MSEBest = inf;
     for t = 1:NTrain
-        netwrk = nr_main(X_train, y_train, X_test, y_test, NHiddenUnits);
-        if netwrk.mse_train(end)<MSEBest, bestnet{k} = netwrk; MSEBest=netwrk.mse_train(end); MSEBest=netwrk.mse_train(end); end
+       % fprintf('Number of hidden units: %d \n',NHiddenUnits(t));% ***
+        netwrk = nr_main(X_train, y_train, X_test, y_test, NHiddenUnits(t));
+        if netwrk.mse_train(end)<MSEBest, bestnet{k} = netwrk; MSEBest=netwrk.mse_train(end); MSEBest=netwrk.mse_train(end);
+                fprintf('Current best number of hidden units: %d \n',NHiddenUnits(t)); % ***
+                besthidden(k) = NHiddenUnits(t);
+        end
     end
     
     % Predict model on test and training data    
@@ -36,11 +41,15 @@ for k = 1:K % For each crossvalidation fold
     % Compute least squares error
     Error_train(k) = sum((y_train-y_train_est).^2);
     Error_test(k) = sum((y_test-y_test_est).^2); 
-        
+ 
+    E_test(k) = mean(y_test-y_test_est);
+     fprintf('E_test for fold %d = %d \n',k,E_test(k)); %***   
+    
     % Compute least squares error when predicting output to be mean of
     % training data
     Error_train_nofeatures(k) = sum((y_train-mean(y_train)).^2);
-    Error_test_nofeatures(k) = sum((y_test-mean(y_train)).^2);            
+    Error_test_nofeatures(k) = sum((y_test-mean(y_train)).^2);  
+
 end
 
 % Print the least squares errors
@@ -52,6 +61,8 @@ fprintf('- Test error:     %8.2f\n', sum(Error_test)/sum(CV.TestSize));
 fprintf('- R^2 train:     %8.2f\n', (sum(Error_train_nofeatures)-sum(Error_train))/sum(Error_train_nofeatures));
 fprintf('- R^2 test:     %8.2f\n', (sum(Error_test_nofeatures)-sum(Error_test))/sum(Error_test_nofeatures));
 
+fprintf('- Best number of hidden units per fold: %d,%d,%d,%d,%d \n', besthidden(1:5)); %***
+fprintf('- E_test for each fold: %d,%d,%d,%d,%d \n', Error_test_nofeatures(1:k));
 
 % Display the trained network 
 mfig('Trained Network');

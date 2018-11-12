@@ -65,7 +65,7 @@ attributeNames = cellstr(["x.1", "x.3",	"x.4",	"x.5",	"x.6",	"x.7",	"x.8",  "x.9
 N = length(X); %number of observation
 M = length(X(1,:)); %input variables
 
-%% K-folk initialization
+%% K-fold initialization
 
 % Create crossvalidation partition for evaluation
 K = 5;
@@ -95,7 +95,7 @@ Error_test_nofeatures = nan(K,1);
  
  %% AVG Output
  %makes no sense
-
+mean(X)
  
  return;
 
@@ -117,15 +117,7 @@ minparent = [20 40 60 80 100]; % Minimum number of observations per branch befor
 
 for k = 1:length(minparent);
     
-    
-    %T = fitctree(X, classNames(y+1), ...    
-    %    'splitcriterion', 'gdi', ...
-    %    'categorical', [], ...
-    %    'PredictorNames', attributeNames, ...
-    %    'prune', 'off', ...
-    %    'minparent', minparent(ii), ...
-    %    'CrossVal','on');
-
+ 
 
 
     
@@ -134,11 +126,12 @@ for k = 1:length(minparent);
         'categorical', [], ...
         'PredictorNames', attributeNames, ...
         'prune', 'off', ... % What does prune do??
-        'minparent', minparent(ii));%, 'CrossVal','on');%, 'CrossVal','on');
+        'minparent', minparent(k));%, 'CrossVal','on');%, 'CrossVal','on');
     % View the tree
     view(T, 'mode','graph')
+    title(sprintf('minparent %d',minparent(k)));
     cvmodel = crossval(T);
-    L = kfoldLoss(cvmodel);
+    L = kfoldLoss(cvmodel)
 end
 
 %% K-nearest
