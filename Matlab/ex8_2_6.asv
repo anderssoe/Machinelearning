@@ -3,25 +3,27 @@
 % Load data
 cdir = fileparts(mfilename('fullpath')); 
 
-% K-fold crossvalidation
-%CV = cvpartition(N,'Kfold', K); %*** made in main
 
 % Parameters for neural network classifier
-NHiddenUnits = [1 2 4 10 20];  % Number of hidden units
+NHiddenUnits = [1 2 3 4 5];  % Number of hidden units
 NTrain = 5; % Number of re-trains of neural network
 
 besthidden = [];
 E_test = [];
 bestnet=cell(K,1);
 
+
+ K-fold crossvalidation
+CV2 = cvpartition(CV.TrainSize(kk),'Kfold', 10); %*** made in main
+
 for k = 1:K % For each crossvalidation fold
-    fprintf('Crossvalidation fold %d/%d\n', k, CV.NumTestSets);
+%    fprintf('Crossvalidation fold %d/%d\n', k, CV.NumTestSets);
 
     % Extract training and test set
-    X_train = X(CV.training(k), :);
-    y_train = y(CV.training(k));
-    X_test = X(CV.test(k), :);
-    y_test = y(CV.test(k));
+    X_train = X(CV2.training(k), :);
+    y_train = y(CV2.training(k));
+    X_test = X(CV2.test(k), :);
+    y_test = y(CV2.test(k));
 
     % Fit neural network to training set
     MSEBest = inf;
@@ -41,7 +43,10 @@ for k = 1:K % For each crossvalidation fold
     % Compute least squares error
     Error_train(k) = sum((y_train-y_train_est).^2);
     Error_test(k) = sum((y_test-y_test_est).^2); 
-        
+ 
+    E_test(k) = mean(y_test-y_test_est);
+     fprintf('E_test for fold %d = %d \n',k,E_test(k)); %***   
+    
     % Compute least squares error when predicting output to be mean of
     % training data
     Error_train_nofeatures(k) = sum((y_train-mean(y_train)).^2);
@@ -53,8 +58,8 @@ end
 %% Display results
 fprintf('\n');
 fprintf('Neural network regression without feature selection:\n');
-fprintf('- Training error: %8.2f\n', sum(Error_train)/sum(CV.TrainSize));
-fprintf('- Test error:     %8.2f\n', sum(Error_test)/sum(CV.TestSize));
+fprintf('- Training error: %8.2f\n', sum(Error_train)/sum(CV2.TrainSize));
+fprintf('- Test error:     %8.2f\n', sum(Error_test)/sum(CV2.TestSize));
 fprintf('- R^2 train:     %8.2f\n', (sum(Error_train_nofeatures)-sum(Error_train))/sum(Error_train_nofeatures));
 fprintf('- R^2 test:     %8.2f\n', (sum(Error_test_nofeatures)-sum(Error_test))/sum(Error_test_nofeatures));
 
