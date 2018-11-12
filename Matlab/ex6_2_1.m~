@@ -55,11 +55,9 @@ for k = 1:K
     bmplot(attributeNames, 1:I, H.In');
     title('Attributes selected');
     xlabel('Iteration');
-    sgtitle(sprintf('%d-Fold',k));
-    sgt.FontSize = 20;
-    saveas(gcf, sprintf('Plots/Project2/FeatureSelection_%d',k), 'epsc')
-    drawnow;
-    
+    saveas(gcf, sprintf('(%d) Feature selection',k), 'epsc')
+    sgtitle(sprintf((%))
+    drawnow;    
 end
 
 %% Display results
