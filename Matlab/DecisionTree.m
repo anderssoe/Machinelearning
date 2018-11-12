@@ -1,5 +1,4 @@
 %% Initialize
-
 clear all
 close all
 clc
@@ -52,8 +51,8 @@ classLabels_TEST = cellstr(num2str(TEST(1:end,2)));
 % y_TEST = y_1ofk_TEST;
 
 % Set classNames to correct vowels
- %classNames = {'i';'I';'E';'A';'a:';'Y';'O';'C:';'U';'u:';'3:'};
- % Create full data matrix
+%classNames = {'i';'I';'E';'A';'a:';'Y';'O';'C:';'U';'u:';'3:'};
+% Create full data matrix
 X = [X_TRAIN;X_TEST];
 y = [y_TRAIN;y_TEST];
 
@@ -86,8 +85,8 @@ Error_test_nofeatures = nan(K,1);
 %% Decision tree - missing 2layer
 
 % exercise 5.1.6
-minparent = [20 40 60 80 100]; % Minimum number of observations per branch before stopping
-
+minparent = [1 2 3 4 5]; % Minimum number of observations per branch before stopping
+Test = zeros(80,5);
 % Fit classification tree
 
 % Outer loop
@@ -98,6 +97,10 @@ for k = 1:5
     X_test = X(CV.test(k), :);
     y_test = y(CV.test(k));
     
+    All_Class_Names = classNames(y+1);
+    classNames_train = All_Class_Names(CV.training(k));
+    BestError = inf;
+    
     for kk = 1:10
         
         inner_X_train = X_train(CV2.training(kk), :);
@@ -105,24 +108,59 @@ for k = 1:5
         inner_X_test = X_train(CV2.test(kk), :);
         inner_y_test = y_train(CV2.test(kk));
         
+        inner_classNames_train = classNames_train(CV2.training(kk));
         
         for Ms = 1:5
             
-            
-        
-            T = fitctree(inner_X_train, classNames(y+1), ...
+            T = fitctree(inner_X_train, inner_classNames_train, ...
                 'splitcriterion', 'gdi', ...
                 'categorical', [], ...
                 'PredictorNames', attributeNames, ...
                 'prune', 'off', ... % What does prune do??
-                'minparent', minparent(Ms));%, 'CrossVal','on');%, 'CrossVal','on');
+                'minparent', minparent(Ms));
+            
             % View the tree
-            view(T, 'mode','graph')
-            title(sprintf('minparent %d',minparent(k)));
-            cvmodel = crossval(T);
-            L = kfoldLoss(cvmodel)
+            %view(T, 'mode','graph')
+            %title(sprintf('minparent %d',minparent(k)));
+            
+            %Test(1:length(inner_y_test), Ms) = str2double(T.predict(inner_X_test)) == inner_y_test;
+            %Error_val(kk, Ms) = sum(Test(:, Ms)/length(inner_y_test));
+            %Error_val(kk, Ms) = 1 - Error_val(kk, Ms);
+            
+            %cvmodel = crossval(T);
+            %L = kfoldLoss(cvmodel)
+            Error_val = 1 - sum(str2double(T.predict(inner_X_test)) == (inner_y_test + 1)) / length(inner_y_test);
+            
+            if  Error_val <= BestError
+                BestError = Error_val;
+                BestModel = Ms;
+            end
+            
         end
+        
+        
+        
+        
+        %Error_gen(kk, :) = min(Error_val(kk, :)) == Error_val(kk, :);
+        %maximum = max(max(sum(Error_gen)));
+        
+        
     end
+    fprintf('%d \n',BestModel);
+    %bestmodel = find(sum(Error_gen) == maximum);
+    %bestmodel = bestmodel(1)
     
+    T = fitctree(X_train, classNames_train, ...
+        'splitcriterion', 'gdi', ...
+        'categorical', [], ...
+        'PredictorNames', attributeNames, ...
+        'prune', 'off', ... % What does prune do??
+        'minparent', minparent(BestModel));%, 'CrossVal','on');%, 'CrossVal','on');
     
+    % Array of right (hits)
+    Error_test_temp(1:length(y_test)) = 1 - (str2double(T.predict(X_test)) == (y_test + 1));
+    % Sum of the hits devided by number of vowels tested
+    Error_test(k) = sum(Error_test_temp) / length(y_test);
+    view(T,'mode','graph')
 end
+
