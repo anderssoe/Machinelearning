@@ -55,7 +55,7 @@ for k = 1:K
     bmplot(attributeNames, 1:I, H.In');
     title('Attributes selected');
     xlabel('Iteration');
-    sgtitle(sprintf('%d-Fold',k));
+    sgt = sgtitle(sprintf('%d-Fold',k));
     sgt.FontSize = 20;
     saveas(gcf, sprintf('Plots/Project2/FeatureSelection_%d',k), 'epsc')
     drawnow;
@@ -80,7 +80,9 @@ mfig('Attributes'); clf;
 bmplot(attributeNames, 1:K, Features');
 xlabel('Crossvalidation fold');
 ylabel('Attribute');
-title('Attributes selected');
+tit = title('Attributes selected');
+tit.FontSize = 20;
+saveas(gcf, sprintf('Plots/Project2/SelectedAttributes'), 'epsc')
 
 % Inspect selected feature coefficients effect on the entire dataset and
 % plot the fitted modeld residual error as function of each attribute to
@@ -98,6 +100,7 @@ for k=1:length(ff)
    xlabel(attributeNames{ff(k)},'FontWeight','bold');
    ylabel('residual error','FontWeight','bold');
 end
+
 
 
 
