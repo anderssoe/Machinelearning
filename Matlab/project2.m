@@ -91,12 +91,70 @@ Error_test_nofeatures = nan(K,1);
  run('ex6_2_1');
  run('LinearRegressionPlot.m')
  %% ANN
- run('ex8_2_6');
+ run('ann_reg');
  
  %% AVG Output
  %makes no sense
-mean(X)
- 
+ for zz = 1:5
+    baseline(zz) = mean(y(CV.training(zz)));
+ end
+ANN_error_test = [19.8261959639922;19.7530728644934;17.1528333032427;18.8975654052411;19.0888622151111]';
+Lin_error_test = [55.0487754387538
+65.8627173707434
+52.9219877263876
+62.1475686904868
+65.0792500989336]';
+
+% Determine if classifiers are significantly different.
+% The function ttest computes credibility interval 
+mfig('Error rates');
+boxplot([(ANN_error_test./CV.TestSize)*100; (Lin_error_test./CV.TestSize)*100; baseline]', ...
+    'labels', {'ANN', 'LinReg','Baseline'});
+ylabel('Error rate (%)');
+
+
+fprintf('ANN vs LinReg\n');
+nu = K-1; 
+z = ANN_error_test - Lin_error_test; 
+zb = mean(z);
+sig = sqrt( mean( (z-zb).^2) / (K-1));
+alpha = 0.05; 
+[zLH] = zb + sig * tinv([alpha/2, 1-alpha/2], nu)
+if zLH(1) < 0 && zLH(2) > 0, 
+    disp('Classifiers are NOT significantly different');
+else
+    disp('Classifiers are significantly different');    
+end
+
+fprintf('ANN vs baseline\n');
+nu = K-1; 
+z = ANN_error_test - baseline; 
+zb = mean(z);
+sig = sqrt( mean( (z-zb).^2) / (K-1));
+alpha = 0.05; 
+[zLH] = zb + sig * tinv([alpha/2, 1-alpha/2], nu)
+if zLH(1) < 0 && zLH(2) > 0, 
+    disp('Classifiers are NOT significantly different');
+else
+    disp('Classifiers are significantly different');    
+end
+
+fprintf('LinReg vs baseline\n');
+nu = K-1; 
+z = Lin_error_test - baseline; 
+zb = mean(z);
+sig = sqrt( mean( (z-zb).^2) / (K-1));
+alpha = 0.05; 
+[zLH] = zb + sig * tinv([alpha/2, 1-alpha/2], nu)
+if zLH(1) < 0 && zLH(2) > 0, 
+    disp('Classifiers are NOT significantly different');
+else
+    disp('Classifiers are significantly different');    
+end
+
+
+
+
  return;
 
  
