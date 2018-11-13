@@ -95,7 +95,7 @@ Error_test_nofeatures = nan(K,1);
  run('ex6_2_1');
  run('LinearRegressionPlot.m')
  %% ANN
- %run('ann_reg');
+ run('ann_reg');
  
  %% AVG Output
  
@@ -180,7 +180,7 @@ run('DecisionTree.m')
 run('K_Nearest.m')
 
 
-%% ANN - Missing 2layer
+%% ANN
 edit('ex8_3_1');
 
 
