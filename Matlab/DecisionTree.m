@@ -216,7 +216,7 @@ figure('Name', 'Error rate for minparent');
 plot(NumNeighbours, Error_N, 'LineWidth', 2);
 title('Error rate for value of minparent')
 xlabel('Value of minparent');
-ylabel('Classification error rate (%)');
+ylabel('Test error');
 xticks(1:5)
 xlim([0.5 5.5])
 

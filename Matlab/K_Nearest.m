@@ -174,7 +174,7 @@ figure('Name', 'Error rate for number of neighbours');
 plot(NumNeighbours, Error_N, 'LineWidth', 2);
 title('Error rate for number of neighbors')
 xlabel('Number of neighbors');
-ylabel('Classification error rate (%)');
+ylabel('Test error');
 xticks(1:10)
 xlim([0.5 10.5])
 
