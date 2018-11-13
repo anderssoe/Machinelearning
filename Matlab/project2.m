@@ -94,10 +94,13 @@ Error_test_nofeatures = nan(K,1);
  run('ann_reg');
  
  %% AVG Output
- %makes no sense
+ 
+
  for zz = 1:5
-    baseline(zz) = mean(y(CV.training(zz)));
+    baseline(zz) = sum((y(CV.test(zz)) - mean(y(CV.training(zz)))).^2); %least squares baseline
  end
+ baseline = baseline';
+
 ANN_error_test = [19.8261959639922;19.7530728644934;17.1528333032427;18.8975654052411;19.0888622151111]';
 Lin_error_test = [55.0487754387538
 65.8627173707434
@@ -108,9 +111,9 @@ Lin_error_test = [55.0487754387538
 % Determine if classifiers are significantly different.
 % The function ttest computes credibility interval 
 mfig('Error rates');
-boxplot([(ANN_error_test./CV.TestSize)*100; (Lin_error_test./CV.TestSize)*100; baseline]', ...
+boxplot([(ANN_error_test./CV.TestSize)*100; (Lin_error_test./CV.TestSize)*100; (baseline./CV.TestSize)*100]', ...
     'labels', {'ANN', 'LinReg','Baseline'});
-ylabel('Error rate (%)');
+ylabel('Error rate');
 
 
 fprintf('ANN vs LinReg\n');
@@ -243,5 +246,5 @@ ylabel('Classification error rate (%)');
 
 
 %% ANN - Missing 2layer
-%edit('ex8_3_1');
+edit('ex8_3_1');
 
