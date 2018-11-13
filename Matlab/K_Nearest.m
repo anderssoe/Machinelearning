@@ -1,5 +1,6 @@
-%% Initialize
+%% K-nearest
 
+%% Initialize
 clear all
 close all
 clc
@@ -52,8 +53,8 @@ classLabels_TEST = cellstr(num2str(TEST(1:end,2)));
 % y_TEST = y_1ofk_TEST;
 
 % Set classNames to correct vowels
- %classNames = {'i';'I';'E';'A';'a:';'Y';'O';'C:';'U';'u:';'3:'};
- % Create full data matrix
+%classNames = {'i';'I';'E';'A';'a:';'Y';'O';'C:';'U';'u:';'3:'};
+% Create full data matrix
 X = [X_TRAIN;X_TEST];
 y = [y_TRAIN;y_TEST];
 
@@ -82,47 +83,87 @@ Error_train_fs = nan(K,1);
 Error_test_fs = nan(K,1);
 Error_train_nofeatures = nan(K,1);
 Error_test_nofeatures = nan(K,1);
+% exercise 7.1.2
 
-%% Decision tree - missing 2layer
+% Load data
+%ex4_1_1
 
-% exercise 5.1.6
-minparent = [20 40 60 80 100]; % Minimum number of observations per branch before stopping
 
-% Fit classification tree
 
-% Outer loop
-for k = 1:5
+% K-nearest neighbors parameters
+Distance = 'euclidean'; % Distance measure
+% Leave-one-out crossvalidation
+%CV = cvpartition(length(X_TRAIN), 'Leaveout');
+%KK = CV.NumTestSets;
+% Variable for classification error
+%Error = nan(KK,L);
+
+for k = 1:K % For each crossvalidation fold
+    fprintf('Crossvalidation fold %d/%d\n', k, CV.NumTestSets);
     
+    % Extract training and test set
     X_train = X(CV.training(k), :);
     y_train = y(CV.training(k));
     X_test = X(CV.test(k), :);
     y_test = y(CV.test(k));
+    BestError = inf;
     
-    for kk = 1:10
+    
+    for kk = 1:K2 % For each number of neighbors
         
         inner_X_train = X_train(CV2.training(kk), :);
         inner_y_train = y_train(CV2.training(kk));
         inner_X_test = X_train(CV2.test(kk), :);
         inner_y_test = y_train(CV2.test(kk));
         
+        % Use knnclassify to find the l nearest neighbors
+        % old code:
+        % y_test_est = knnclassify(X_test, X_train, y_train, l, Distance);
+        % new code:
         
-        for Ms = 1:5
+        for Ms = 1:10
             
+            knn = fitcknn(inner_X_train, inner_y_train, 'NumNeighbors', Ms, 'Distance', Distance);
             
-        
-            T = fitctree(inner_X_train, classNames(y+1), ...
-                'splitcriterion', 'gdi', ...
-                'categorical', [], ...
-                'PredictorNames', attributeNames, ...
-                'prune', 'off', ... % What does prune do??
-                'minparent', minparent(Ms));%, 'CrossVal','on');%, 'CrossVal','on');
-            % View the tree
-            view(T, 'mode','graph')
-            title(sprintf('minparent %d',minparent(k)));
-            cvmodel = crossval(T);
-            L = kfoldLoss(cvmodel)
+            y_test_est = predict(knn, inner_X_test);
+            
+            % Compute number of classification errors
+            Error_val = sum(inner_y_test ~= y_test_est) / length(inner_y_test); % Count the number of errors
+            if  Error_val <= BestError
+                BestError = Error_val;
+                BestModel = Ms;
+            end
         end
     end
     
+    fprintf('%d \n',BestModel);
+    
+    knn = fitcknn(X_train, y_train, 'NumNeighbors', BestModel, 'Distance', Distance);
+    
+    y_test_est = predict(knn, X_test);
+    
+    % Array of right (hits)
+    Error_test(k)  = sum(y_test ~= y_test_est) / length(y_test); % Count the number of errors
+    
     
 end
+
+for Ms = 1:10
+    knn = fitcknn(X_train, y_train, 'NumNeighbors', Ms, 'Distance', Distance);
+    
+    y_test_est = predict(knn, X_test);
+    
+    % Array of right (hits)
+    Error_N(Ms)  = sum(y_test ~= y_test_est) / length(y_test); % Count the number of errors
+    
+    
+end
+
+NumNeighbours = 1:10;
+% Plot the classification error rate
+figure('Name', 'Error rate for number of neighbours');
+plot(NumNeighbours, Error_N);
+xlabel('Number of neighbors');
+ylabel('Classification error rate (%)');
+
+
