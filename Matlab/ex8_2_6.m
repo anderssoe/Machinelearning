@@ -8,7 +8,7 @@ cdir = fileparts(mfilename('fullpath'));
 NHiddenUnits = [1 2 3 4 5];  % Number of hidden units
 NTrain = 5; % Number of re-trains of neural network
 
-besthidden = [];
+besthidden = zeros(5, 1);
 E_test = [];
 bestnet=cell(K,1);
 
@@ -16,7 +16,7 @@ bestnet=cell(K,1);
 for kk = 1:K
 
     %% INNER
-     K-fold crossvalidation
+    % K-fold crossvalidation
     CV2 = cvpartition(CV.TrainSize(kk),'Kfold', 10); %*** made in main
     for k = 1:10 % For each crossvalidation fold
     %    fprintf('Crossvalidation fold %d/%d\n', k, CV.NumTestSets);
@@ -56,7 +56,7 @@ for kk = 1:K
 
     end
 
-
+end
 
 % Print the least squares errors
 
@@ -69,8 +69,8 @@ fprintf('- Test error:     %8.2f\n', sum(Error_test)/sum(CV2.TestSize));
 fprintf('- R^2 train:     %8.2f\n', (sum(Error_train_nofeatures)-sum(Error_train))/sum(Error_train_nofeatures));
 fprintf('- R^2 test:     %8.2f\n', (sum(Error_test_nofeatures)-sum(Error_test))/sum(Error_test_nofeatures));
 
-fprintf('- Best number of hidden units per fold: %d,%d,%d,%d,%d \n', besthidden(1:5)); %***
-fprintf('- E_test for each fold: %d,%d,%d,%d,%d \n', Error_test_nofeatures(1:k));
+fprintf('- Best number of hidden units per fold: %d, %d, %d, %d, %d \n', besthidden(1:5)); %***
+fprintf('- E_test for each fold: %d, %d, %d, %d, %d \n', Error_test_nofeatures(1:k));
 
 % Display the trained network 
 mfig('Trained Network');

@@ -71,6 +71,10 @@ M = length(X(1,:)); %input variables
 K = 5;
 CV = cvpartition(N, 'Kfold', K);
 
+K2 = 10;
+CV2 = cvpartition(CV.TrainSize(1), 'Kfold', K2);
+
+
 % Initialize variables
 Features = nan(K,M);
 Error_train = nan(K,1);
@@ -114,24 +118,30 @@ minparent = [20 40 60 80 100]; % Minimum number of observations per branch befor
 
 % Fit classification tree
 
-
-for k = 1:length(minparent);
+% Outer loop
+for k = 1:5
     
- 
-
-
+    for kk = 1:10
+        
+        for Ms = 1:5
+            
+            
+        
+            T = fitctree(X, classNames(y+1), ...
+                'splitcriterion', 'gdi', ...
+                'categorical', [], ...
+                'PredictorNames', attributeNames, ...
+                'prune', 'off', ... % What does prune do??
+                'minparent', minparent(k));%, 'CrossVal','on');%, 'CrossVal','on');
+            % View the tree
+            view(T, 'mode','graph')
+            title(sprintf('minparent %d',minparent(k)));
+            cvmodel = crossval(T);
+            L = kfoldLoss(cvmodel)
+        end
+    end
     
-    T = fitctree(X, classNames(y+1), ...
-        'splitcriterion', 'gdi', ...
-        'categorical', [], ...
-        'PredictorNames', attributeNames, ...
-        'prune', 'off', ... % What does prune do??
-        'minparent', minparent(k));%, 'CrossVal','on');%, 'CrossVal','on');
-    % View the tree
-    view(T, 'mode','graph')
-    title(sprintf('minparent %d',minparent(k)));
-    cvmodel = crossval(T);
-    L = kfoldLoss(cvmodel)
+    
 end
 
 %% K-nearest
@@ -169,8 +179,8 @@ for kk = 1:KK % For each crossvalidation fold
         % old code:
         % y_test_est = knnclassify(X_test, X_train, y_train, l, Distance);
         % new code:
-        knn=fitcknn(X_train2, y_train2, 'NumNeighbors', l, 'Distance', Distance);
-        y_test_est=predict(knn, X_test2);
+        knn = fitcknn(X_train2, y_train2, 'NumNeighbors', l, 'Distance', Distance);
+        y_test_est = predict(knn, X_test2);
         
         % Compute number of classification errors
         Error(kk,l) = sum(y_test2~=y_test_est); % Count the number of errors

@@ -67,7 +67,7 @@ M = length(X(1,:)); %input variables
 
 % Create crossvalidation partition for evaluation
 K = 5;
-CV = cvpartition(N, 'Kfold', K);
+read('CV1.mat')
 
 K2 = 10;
 CV2 = cvpartition(CV.TrainSize(1), 'Kfold', K2);
@@ -161,6 +161,7 @@ for k = 1:5
     Error_test_temp(1:length(y_test)) = 1 - (str2double(T.predict(X_test)) == (y_test + 1));
     % Sum of the hits devided by number of vowels tested
     Error_test(k) = sum(Error_test_temp) / length(y_test);
+    Error_model(k) = BestModel;
     view(T,'mode','graph')
 end
 

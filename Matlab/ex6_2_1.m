@@ -95,7 +95,7 @@ saveas(gcf, sprintf('Plots/Project2/SelectedAttributes'), 'epsc')
 % inspect for systematic structure in the residual
 k=1; % cross-validation fold to inspect
 ff=find(Features(k,:));
-w=glmfit(X(:,ff), y) 
+w = glmfit(X(:,ff), y) 
 
 y_est= glmval(w,X(:,ff),'identity');
 residual=y-y_est;
