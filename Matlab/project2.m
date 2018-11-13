@@ -95,7 +95,7 @@ Error_test_nofeatures = nan(K,1);
  run('ex6_2_1');
  run('LinearRegressionPlot.m')
  %% ANN
- run('ann_reg');
+ %run('ann_reg');
  
  %% AVG Output
  
@@ -162,7 +162,6 @@ end
 
 
 
- return;
 
  
 %% CLASSIFICATION
@@ -174,85 +173,11 @@ attributeNames = cellstr(["x.1", "x.2",	"x.3",	"x.4",	"x.5",	"x.6",	"x.7",	"x.8"
 
 %% Decision tree - missing 2layer
 
-% exercise 5.1.6
-minparent = [20 40 60 80 100]; % Minimum number of observations per branch before stopping
-
-% Fit classification tree
-
-% Outer loop
-for k = 1:5
-    
-    for kk = 1:10
-        
-        for Ms = 1:5
-            
-            
-        
-            T = fitctree(X, classNames(y+1), ...
-                'splitcriterion', 'gdi', ...
-                'categorical', [], ...
-                'PredictorNames', attributeNames, ...
-                'prune', 'off', ... % What does prune do??
-                'minparent', minparent(k));%, 'CrossVal','on');%, 'CrossVal','on');
-            % View the tree
-            view(T, 'mode','graph')
-            title(sprintf('minparent %d',minparent(k)));
-            cvmodel = crossval(T);
-            L = kfoldLoss(cvmodel)
-        end
-    end
-    
-    
-end
+run('DecisionTree.m')
 
 %% K-nearest
 
-% exercise 7.1.2
-
-% Load data
-%ex4_1_1
-
-
-
-% K-nearest neighbors parameters
-Distance = 'euclidean'; % Distance measure
-L = 20; % Maximum number of neighbors
-
-
-% Leave-one-out crossvalidation
-CV = cvpartition(length(X_TRAIN), 'Leaveout');
-KK = CV.NumTestSets;
-% Variable for classification error
-Error = nan(KK,L);
-
-for kk = 1:KK % For each crossvalidation fold
-    fprintf('Crossvalidation fold %d/%d\n', kk, CV.NumTestSets);
-
-    % Extract training and test set
-    X_train2 = X_TRAIN(CV.training(kk), :);
-    y_train2 = y_TRAIN(CV.training(kk));
-    X_test2 = X_TRAIN(CV.test(kk), :);
-    y_test2 = y_TRAIN(CV.test(kk));
-
-    for l = 1:L % For each number of neighbors
-        
-        % Use knnclassify to find the l nearest neighbors
-        % old code:
-        % y_test_est = knnclassify(X_test, X_train, y_train, l, Distance);
-        % new code:
-        knn = fitcknn(X_train2, y_train2, 'NumNeighbors', l, 'Distance', Distance);
-        y_test_est = predict(knn, X_test2);
-        
-        % Compute number of classification errors
-        Error(kk,l) = sum(y_test2~=y_test_est); % Count the number of errors
-    end
-end
-
-% Plot the classification error rate
-mfig('Error rate');
-plot(sum(Error)./sum(CV.TestSize)*100);
-xlabel('Number of neighbors');
-ylabel('Classification error rate (%)');
+run('K_Nearest.m')
 
 
 %% ANN - Missing 2layer

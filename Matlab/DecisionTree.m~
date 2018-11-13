@@ -176,15 +176,13 @@ set(gca, 'FontSize', 16)
 saveas(gcf, 'Plots/Project2/TreeErrorPerFold', 'epsc')
 
 
- k = 3; 
+ k = 4; 
 
  X_train = X(CV.training(k), :);
     y_train = y(CV.training(k));
     X_test = X(CV.test(k), :);
     y_test = y(CV.test(k));
-    All_Class_Names = classNames(y+1);
-    classNames_train = All_Class_Names(CV.training(k));
-    
+
 for Ms = 1:5
      T = fitctree(X_train, classNames_train, ...
                 'splitcriterion', 'gdi', ...
@@ -211,7 +209,7 @@ end
 
 NumNeighbours = 1:5;
 % Plot the classification error rate
-figure('Name', 'Error rate for minparent');
+figure('Name', 'Error rate for miparent');
 
 plot(NumNeighbours, Error_N, 'LineWidth', 2);
 title('Error rate for value of minparent')
@@ -221,4 +219,4 @@ xticks(1:5)
 xlim([0.5 5.5])
 
 set(gca, 'FontSize', 16)
-saveas(gcf, 'Plots/Project2/DTreeErrorPerMinparent', 'epsc')
+saveas(gcf, 'Plots/Project2/KNearestErrorPerFold', 'epsc')

@@ -69,10 +69,8 @@ M = length(X(1,:)); %input variables
 
 % Create crossvalidation partition for evaluation
 K = 5;
-CV = cvpartition(N, 'Kfold', K);
-
+load('CV1_2.mat')
 K2 = 10;
-CV2 = cvpartition(CV.TrainSize(1), 'Kfold', K2);
 
 
 % Initialize variables
@@ -136,7 +134,7 @@ for k = 1:K % For each crossvalidation fold
         end
     end
     
-    fprintf('%d \n',BestModel);
+    fprintf('Best model for K-fold %d = %d \n',k, BestModel);
     
     knn = fitcknn(X_train, y_train, 'NumNeighbors', BestModel, 'Distance', Distance);
     
@@ -147,6 +145,16 @@ for k = 1:K % For each crossvalidation fold
     
     
 end
+fprintf('K-Nearest Generalization Error = %d \n',mean(Error_test));
+
+
+
+ k = 4; 
+
+ X_train = X(CV.training(k), :);
+    y_train = y(CV.training(k));
+    X_test = X(CV.test(k), :);
+    y_test = y(CV.test(k));
 
 for Ms = 1:10
     knn = fitcknn(X_train, y_train, 'NumNeighbors', Ms, 'Distance', Distance);
@@ -162,8 +170,13 @@ end
 NumNeighbours = 1:10;
 % Plot the classification error rate
 figure('Name', 'Error rate for number of neighbours');
-plot(NumNeighbours, Error_N);
+
+plot(NumNeighbours, Error_N, 'LineWidth', 2);
+title('Error rate for number of neighbors')
 xlabel('Number of neighbors');
 ylabel('Classification error rate (%)');
+xticks(1:10)
+xlim([0.5 10.5])
 
-
+set(gca, 'FontSize', 16)
+saveas(gcf, 'Plots/Project2/KNearestErrorNumNeighbours', 'epsc')
