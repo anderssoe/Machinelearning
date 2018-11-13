@@ -15,23 +15,28 @@ bestnet=cell(K,1);
 %% OUTER
 for kk = 1:K
 
+    X_train = X(CV.training(kk),:);
+    y_train = y(CV.training(kk));
+    X_test = X(CV.test(kk),:);
+    y_test = y(CV.test(KK));
+    
+    fprintf('## Outer cross-fold %d / %d \n',kk,K);
     %% INNER
-    % K-fold crossvalidation
+
+     %K-fold crossvalidation
     CV2 = cvpartition(CV.TrainSize(kk),'Kfold', 10); %*** made in main
     for k = 1:10 % For each crossvalidation fold
-    %    fprintf('Crossvalidation fold %d/%d\n', k, CV.NumTestSets);
-
         % Extract training and test set
-        X_train = X(CV2.training(k), :);
-        y_train = y(CV2.training(k));
-        X_test = X(CV2.test(k), :);
-        y_test = y(CV2.test(k));
+        X_inner_train = X(CV2.training(k), :);
+        y_inner_train = y(CV2.training(k));
+        X_inner_test = X(CV2.test(k), :);
+        y_inner_test = y(CV2.test(k));
 
-        % Fit neural network to training set
+        % Fit neural network to inner training set + select optimal hidden units 
         MSEBest = inf;
-        for t = 1:NTrain
+        for t = 1:NTrain 
            % fprintf('Number of hidden units: %d \n',NHiddenUnits(t));% ***
-            netwrk = nr_main(X_train, y_train, X_test, y_test, NHiddenUnits(t));
+            netwrk = nr_main(X_inner_train, y_inner_train, X_inner_test, y_inner_test, NHiddenUnits(t));
             if netwrk.mse_train(end)<MSEBest, bestnet{k} = netwrk; MSEBest=netwrk.mse_train(end); MSEBest=netwrk.mse_train(end);
                     fprintf('Current best number of hidden units: %d \n',NHiddenUnits(t)); % ***
                     besthidden(k) = NHiddenUnits(t);
@@ -44,15 +49,12 @@ for kk = 1:K
 
         % Compute least squares error
         Error_train(k) = sum((y_train-y_train_est).^2);
-        Error_test(k) = sum((y_test-y_test_est).^2); 
-
-        E_test(k) = mean(y_test-y_test_est);
-         fprintf('E_test for fold %d = %d \n',k,E_test(k)); %***   
+        Error_test(k) = sum((y_inner_test-y_test_est).^2); 
 
         % Compute least squares error when predicting output to be mean of
         % training data
         Error_train_nofeatures(k) = sum((y_train-mean(y_train)).^2);
-        Error_test_nofeatures(k) = sum((y_test-mean(y_train)).^2);  
+        Error_test_nofeatures(k) = sum((y_inner_test-mean(y_train)).^2);  
 
     end
 
@@ -78,7 +80,7 @@ k=1; % cross-validation fold
 displayNetworkRegression(bestnet{k});
 
 % Display how network predicts (only for when there are two attributes)
-if size(X_train,2)==2 % Works only for problems with two attributes
+if size(X_inner_train,2)==2 % Works only for problems with two attributes
 	mfig('Decision Boundary');
-	displayDecisionFunctionNetworkRegression(X_train, y_train, X_test, y_test, bestnet{k});
+	displayDecisionFunctionNetworkRegression(X_inner_train, y_train, X_inner_test, y_inner_test, bestnet{k});
 end
