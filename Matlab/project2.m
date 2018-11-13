@@ -183,3 +183,65 @@ run('K_Nearest.m')
 %% ANN - Missing 2layer
 edit('ex8_3_1');
 
+
+
+%% Comparison
+most = [];
+for k = 1:K
+    temp=[];
+    for zz = 1:11
+     temp(zz) = sum(logical((zz-1)==y(CV.training(k))));
+    end
+    [bb,most(k)] = max(temp); %most = indices of the maximum value
+    base_ErrorRate(k) = sum(y(CV.test(k))~=(most(k)-1))/length(y(CV.test(k)));
+end
+baseline = base_ErrorRate*100; %to %
+%Model 1 Error rates - Decision Tree
+model1 = [19.19,14.14,26.77,22.22,20.20];
+%Model 2 Error rates - KNN
+model2 = [2.53,1.01,2.02,0.51,1.51];
+%%
+mfig('Error rates');
+boxplot([model1; model2; baseline]', ...
+    'labels', {'Decision Tree', 'KNN','Baseline'});
+ylabel('Error rate [%]');
+set(gca,'FontSize',18);
+saveas(gcf, sprintf('Plots/Project2/clas_boxplot'), 'epsc');
+fprintf('Decision Tree vs  KNN\n');
+nu = K-1; 
+z = model1 - model2; 
+zb = mean(z);
+sig = sqrt( mean( (z-zb).^2) / (K-1));
+alpha = 0.05; 
+[zLH] = zb + sig * tinv([alpha/2, 1-alpha/2], nu)
+if zLH(1) < 0 && zLH(2) > 0, 
+    disp('Classifiers are NOT significantly different');
+else
+    disp('Classifiers are significantly different');    
+end
+
+fprintf('Decision Tree vs baseline\n');
+nu = K-1; 
+z = model1 - baseline; 
+zb = mean(z);
+sig = sqrt( mean( (z-zb).^2) / (K-1));
+alpha = 0.05; 
+[zLH] = zb + sig * tinv([alpha/2, 1-alpha/2], nu)
+if zLH(1) < 0 && zLH(2) > 0, 
+    disp('Classifiers are NOT significantly different');
+else
+    disp('Classifiers are significantly different');    
+end
+
+fprintf('KNN vs baseline\n');
+nu = K-1; 
+z = model2 - baseline; 
+zb = mean(z);
+sig = sqrt( mean( (z-zb).^2) / (K-1));
+alpha = 0.05; 
+[zLH] = zb + sig * tinv([alpha/2, 1-alpha/2], nu)
+if zLH(1) < 0 && zLH(2) > 0, 
+    disp('Classifiers are NOT significantly different');
+else
+    disp('Classifiers are significantly different');    
+end

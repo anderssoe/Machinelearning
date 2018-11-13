@@ -9,12 +9,11 @@ rmpath(fullfile(cdir,'/Tools/nc_binclass'));
 addpath(fullfile(cdir,'/Tools/nc_multiclass'));
 
 % Parameters for neural network classifier
-NHiddenUnits = [1,5,10];  % Number of hidden units
+NHiddenUnits = [1 3 5];  % Number of hidden units
 NTrain = 1;
 N_test = length(X_TEST);
 KK = 10; % inner folds amount
 besthidden = [];
-top_besthidden = [];
 %% OUTER
 for k = 1:K
     X_train = X(CV.training(k),:);
@@ -69,8 +68,8 @@ for k = 1:K
             end
         end %end find model
     end %end inner fold
-    top_besthidden(k) = besthidden;
-    outer_net(k) = nc_main(X_train, y_train+1, X_test, y_test+1, besthidden); %retrain on new training data with optimized units
+    
+    outer_net(k) = nc_main(X_train, y_train+1, X_test, y_test+1, NHiddenUnits(s)); %retrain on new training data with optimized units
     % Get the predicted output for the test data
     Y_train_est = nc_eval(outer_net(k),X_train);
     Y_test_est = nc_eval(outer_net(k), X_test);      
@@ -96,12 +95,10 @@ end %end outer
 mfig('Trained network'); clf;   
 net = outer_net(2); %print lowest error network
 displayNetworkClassification(net)
-saveas(gcf, sprintf('Plots/Project2/ANN_class_network_%d',2), 'epsc') 
+ 
 % Display decision boundaries
- classNames_proper = {'i';'I';'E';'A';'a:';'Y';'O';'C:';'U';'u:';'3:'};
 mfig('Decision Boundaries'); clf;   
 dbplot(X(CV.test(2),:), y(CV.test(2)), @(X) max_idx(nc_eval(net, X))-1);
 xlabel(attributeNames(1));
 ylabel(attributeNames(2));
-legend(classNames_proper);
-saveas(gcf, sprintf('Plots/Project2/ANN_class_%d',2), 'epsc')
+legend('
