@@ -104,7 +104,99 @@ run('GMM.m');
 %2. Discuss whether it seems there may be outliers in your data according to the three scoring methods.
 
 % ex11_4_1 = KNN density,
+%% GKN using leave-one-out
+widths=max(var(X))*(2.^[-10:2]); % evaluate for a range of kernel widths
+for w=1:length(widths)
+   [density,log_density]=gausKernelDensity(X,widths(w));
+   logP(w)=sum(log_density);
+end
+[val,ind]=max(logP);
+width=widths(ind);
+display(['Optimal kernel width is ' num2str(width)])
+% evaluate density for estimated width
+density=gausKernelDensity(X,width);
 
+% Sort the densities
+[y,i] = sort(density);
+
+% Plot outlier scores
+mfig('Gaussian Kernel Density: outlier score'); clf;
+bar(y(1:990));
+
+% Plot possible outliers
+mfig('Gaussian Kernel Density: Possible outliers'); clf;
+for k = 1:990
+    subplot(4,5,k);
+    imagesc(reshape(X(i(k),:), 16, 16)); 
+    title(k);
+    colormap(1-gray); 
+    axis image off;
+end
+
+
+%% K-nearest neighbor density estimator - *** Missing crossvalidation
+
+% Number of neighbors
+K = 5;
+
+% Find the k nearest neighbors
+[idx, D] = knnsearch(X, X, 'K', K+1);
+
+% Compute the density
+density = 1./(sum(D(:,2:end),2)/K);
+
+% Sort the densities
+[y,i] = sort(density);
+
+% Plot outlier scores
+mfig('KNN density: outlier score'); clf;
+bar(y(1:20));
+
+% Plot possible outliers
+mfig('KNN density: Possible outliers'); clf;
+for k = 1:20
+    subplot(4,5,k);
+    imagesc(reshape(X(i(k),:), 16, 16)); 
+    title(k);
+    colormap(1-gray); 
+    axis image off;
+end
+
+%% K-nearest neigbor average relative density
+% Compute the average relative density
+avg_rel_density=density./(sum(density(idx(:,2:end)),2)/K);
+
+% Sort the densities
+[y,i] = sort(avg_rel_density);
+
+% Plot outlier scores
+mfig('KNN average relative density: outlier score'); clf;
+bar(y(1:20));
+
+% Plot possible outliers
+mfig('KNN average relative density: Possible outliers'); clf;
+for k = 1:20
+    subplot(4,5,k);
+    imagesc(reshape(X(i(k),:), 16, 16)); 
+    title(k);
+    colormap(1-gray); 
+    axis image off;
+end
+
+
+
+%% %% ASSOCIATION MINING
+%binarize data
+d = X;
+M = ceil(max(d(:)));
+N = size(d,1);
+X_ass = zeros(N,M);
+disp(d);
+% Binary encode the dataset
+for i=1:N
+    X_ass(i,d(i, d(i,:) >0) ) = 1;
+end
+disp(X_ass);
 
 
 

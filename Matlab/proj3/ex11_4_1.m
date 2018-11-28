@@ -41,7 +41,7 @@ for k = 1:20
 end
 
 
-%% K-nearest neighbor density estimator 
+%% K-nearest neighbor density estimator %cannot use crossvalidation
 
 % Number of neighbors
 K = 5;
@@ -69,7 +69,7 @@ for k = 1:20
     axis image off;
 end
 
-%% K-nearest neigbor average relative density
+%% K-nearest neigbor average relative density % Cannot use crossvalidation
 % Compute the average relative density
 avg_rel_density=density./(sum(density(idx(:,2:end)),2)/K);
 
