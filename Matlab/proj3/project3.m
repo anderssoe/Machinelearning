@@ -1,4 +1,4 @@
-%project 3
+ %project 3
 
 %% Initialize
 
@@ -62,11 +62,29 @@ y = [y_TRAIN;y_TEST];
 
 N = length(X); %number of observation
 M = length(X(1,:)); %input variables
+%% K-fold initialization
+
+% Create crossvalidation partition for evaluation
+K = 5;
+CV = cvpartition(N, 'Kfold', K);
+
+K2 = 10;
+CV2 = cvpartition(CV.TrainSize(1), 'Kfold', K2);
+
+
+% Initialize variables
+Features = nan(K,M);
+Error_train = nan(K,1);
+Error_test = nan(K,1);
+Error_train_fs = nan(K,1);
+Error_test_fs = nan(K,1);
+Error_train_nofeatures = nan(K,1);
+Error_test_nofeatures = nan(K,1);
 
 %% Clustering
 
 % ex_10_2_1 = Hierachical clustering
-
+run('GMM.m');
 
 
 %% ex11_1_5 = GMM
