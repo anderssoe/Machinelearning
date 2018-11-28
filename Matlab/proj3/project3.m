@@ -59,10 +59,6 @@ classLabels_TEST = cellstr(num2str(TEST(1:end,2)));
 X = [X_TRAIN;X_TEST];
 y = [y_TRAIN;y_TEST];
 
-y = X(:,2);
-X(:,2) = [];
-attributeNames = cellstr(["x.1", "x.3",	"x.4",	"x.5",	"x.6",	"x.7",	"x.8",  "x.9",	"x.10"]);
-
 
 N = length(X); %number of observation
 M = length(X(1,:)); %input variables
