@@ -1,5 +1,7 @@
  %project 3
 
+
+%ex12_1_3: binary encoding
 %% Initialize
 
 clear all
@@ -90,13 +92,18 @@ run('GMM.m');
 %% ex11_1_5 = GMM
 
 
-%% ex11_4_1 =
 
 
 
 
 
 
+%% Anomaly detection
+%    Rank all the observations in terms of the Gaussian Kernel density (using leaveone-out), KNN density, KNN average relative density (ARD). 
+%(If the scale of each attribute in your data are very di?erent it may turn useful to normalize the data prior to the analysis).
+%2. Discuss whether it seems there may be outliers in your data according to the three scoring methods.
+
+% ex11_4_1 = KNN density,
 
 
 
