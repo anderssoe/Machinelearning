@@ -63,7 +63,10 @@ y = [y_TRAIN;y_TEST];
 N = length(X); %number of observation
 M = length(X(1,:)); %input variables
 
-%% ex_10_2_1 = Hierachical clustering
+%% Clustering
+
+% ex_10_2_1 = Hierachical clustering
+
 
 
 %% ex11_1_5 = GMM

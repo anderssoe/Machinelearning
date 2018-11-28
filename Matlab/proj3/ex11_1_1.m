@@ -2,7 +2,7 @@
 
 % Load data
 cdir = fileparts(mfilename('fullpath')); 
-load(fullfile(cdir,'../Data/synth1'));
+load(fullfile(cdir,'Data/synth1'));
 
 %% Gaussian mixture model
 
