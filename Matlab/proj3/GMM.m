@@ -3,7 +3,7 @@
 %% Gaussian mixture model
 
 % Range of K's to try
-KRange = 1:30;
+KRange = 10:20;
 T = length(KRange);
 
 % Allocate variables
@@ -45,7 +45,7 @@ for t = 1:T
     % Save the best fitting model
     if CVE(t) <= min(CVE(1:t))
         Gbest = G;
-        bestK = t;
+        bestK = K;
     end
 end
 
@@ -62,6 +62,7 @@ xlabel('K');
 %% Extract cluster centers
 X_c = Gbest.mu;
 Sigma_c=Gbest.Sigma;
+i = cluster(Gbest, X)-1;
 %% Plot results
 
 % Plot clustering
@@ -70,3 +71,4 @@ clusterplot(X, y, i, X_c, Sigma_c);
 
 fprintf('Best K value according to Xval: %d \n',bestK');
 
+[gmm_Rand, gmm_Jaccard, gmm_NMI] = clusterval(y, i)

@@ -21,13 +21,10 @@ for ii = 1:7
     
 end
 
-figure('Name', 'Hierarchical clustering validity')
-H = bar([Rand' , Jaccard', NMI'])
-legend('Rand','Jaccard','NMI');
-xticklabels(LinkageType);
-xtickangle(45);
+figure('Hierarchical clustering vali
 
-%xticks()
+H = bar([Rand' , Jaccard', NMI'])
+
 %% Plot results
 % Plot dendrogram
 mfig('Dendrogram'); clf;
@@ -36,3 +33,4 @@ dendrogram(Z,Maxclust);
 % Plot data
 mfig('Hierarchical'); clf;
 clusterplot(X, y, i);
+%sum((i ~= y)/length(i));
