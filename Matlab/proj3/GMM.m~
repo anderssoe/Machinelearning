@@ -3,15 +3,14 @@
 %% Gaussian mixture model
 
 % Range of K's to try
-KRange = 1:30;
+KRange = 1:3;
 T = length(KRange);
 
 % Allocate variables
 BIC = nan(T,1);
 AIC = nan(T,1);
 CVE = zeros(T,1);
-Gbest = [];
-bestK = [];
+
 % For each model order
 for t = 1:T
     % Get the current K
@@ -42,10 +41,9 @@ for t = 1:T
         CVE(t) = CVE(t)+NLOGL;
     end
     
-    % Save the best fitting model
-    if CVE(t) <= min(CVE(1:t))
+    % Save te best fitting model
+    if CVE(t) < min(CVE)
         Gbest = G;
-        bestK = t;
     end
 end
 
@@ -67,6 +65,4 @@ Sigma_c=Gbest.Sigma;
 % Plot clustering
 mfig('GMM: Clustering'); clf; 
 clusterplot(X, y, i, X_c, Sigma_c);
-
-fprintf('Best K value according to Xval: %d \n',bestK');
 

@@ -1,16 +1,16 @@
 % exercise 10.2.1
 
 % Load data
-cdir = fileparts(mfilename('fullpath')); 
-load(fullfile(cdir,'../Data/synth1'));
+%cdir = fileparts(mfilename('fullpath')); 
+%load(fullfile(cdir,'../Data/synth1'));
 
 %% Hierarchical clustering
 
 % Maximum number of clusters
-Maxclust = 4;
+Maxclust = 11;
 
 % Compute hierarchical clustering
-Z = linkage(X, 'single', 'euclidean');
+Z = linkage(X, 'average', 'euclidean');
 
 % Compute clustering by thresholding the dendrogram
 i = cluster(Z, 'Maxclust', Maxclust);
