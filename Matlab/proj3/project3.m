@@ -87,10 +87,9 @@ Error_test_nofeatures = nan(K,1);
 
 % ex_10_2_1 = Hierachical clustering
 run('GMM.m');
-
-
-%% ex11_1_5 = GMM
-
+%%
+% Hierachical
+run('hierachical.m');
 
 
 
