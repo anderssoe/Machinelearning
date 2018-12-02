@@ -3,7 +3,7 @@
 %% Gaussian mixture model
 
 % Range of K's to try
-KRange = 10:20;
+KRange = 10:25;
 T = length(KRange);
 
 % Allocate variables

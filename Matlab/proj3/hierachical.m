@@ -16,13 +16,13 @@ for ii = 1:7
     i = cluster(Z, 'Maxclust', Maxclust) - 1;
     
     % Estimate the cluster validity
-    [Rand(ii), Jaccard(ii), NMI(ii)] = clusterval(y, i);
+    [h_Rand(ii), h_Jaccard(ii), h_NMI(ii)] = clusterval(y, i);
     
     
 end
 
 figure('Name', 'Hierarchical clustering validity')
-H = bar([Rand' , Jaccard', NMI'])
+H = bar([h_Rand' , h_Jaccard', h_NMI'])
 legend('Rand','Jaccard','NMI');
 xticklabels(LinkageType);
 xtickangle(45);

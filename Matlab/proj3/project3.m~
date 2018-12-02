@@ -216,7 +216,7 @@ N = size(X, 1);
 [Xbin,attributeNamesBin] = binarize(X, 2*ones(1,M), attributeNames);
 % from ex12_1_6
 minSup = .20; % minimum support
-minConf = .80; % minmum confidence
+minConf = .0; % minmum confidence
 nRules = 100; % Max rules
 sortFlag = 1; % sorting of found rules (see doc)
 [rules, ~] = findRules(Xbin, minSup, minConf, nRules, sortFlag);
