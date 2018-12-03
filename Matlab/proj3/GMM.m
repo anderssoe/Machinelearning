@@ -59,6 +59,7 @@ plot(KRange, BIC, 'LineWidth', 2);
 plot(KRange, AIC, 'LineWidth', 2);
 plot(KRange, 2*CVE, 'LineWidth', 2);
 
+ylabel('Error');
 xlabel('K');
 set(gca, 'FontSize', 12)
 title('GMM: Number of clusters', 'FontSize', 16)
@@ -79,9 +80,9 @@ figure('Name', 'GMM: Clustering', 'Position', [500 500 1100 800])
 
 clusterplot(X, y, i, X_c, Sigma_c);
 
+set(gca, 'FontSize', 18)
 
-set(gca, 'FontSize', 12)
-title('GMM: Clustering', 'FontSize', 16)
+title('GMM: Clustering', 'FontSize', 24)
 
 saveas(gcf, 'Plots/GMM_Clustering', 'epsc')
 
