@@ -3,7 +3,7 @@
 %% Gaussian mixture model
 
 % Range of K's to try
-KRange = 10:25;
+KRange = 1:30;
 T = length(KRange);
 
 % Allocate variables
@@ -52,12 +52,22 @@ end
 
 %% Plot results
 
-mfig('GMM: Number of clusters'); clf; hold all
-plot(KRange, BIC);
-plot(KRange, AIC);
-plot(KRange, 2*CVE);
-legend('BIC', 'AIC', 'Crossvalidation');
+figure('Name', 'GMM: Number of clusters')
+
+hold all
+plot(KRange, BIC, 'LineWidth', 2);
+plot(KRange, AIC, 'LineWidth', 2);
+plot(KRange, 2*CVE, 'LineWidth', 2);
+
+ylabel('Error');
 xlabel('K');
+set(gca, 'FontSize', 12)
+title('GMM: Number of clusters', 'FontSize', 16)
+legend('BIC', 'AIC', 'Crossvalidation');%, 'FontSize', 12)
+
+saveas(gcf, 'Plots/GMM_NumberOfClusters', 'epsc')
+
+
 
 %% Extract cluster centers
 X_c = Gbest.mu;
@@ -66,8 +76,18 @@ i = cluster(Gbest, X)-1;
 %% Plot results
 
 % Plot clustering
-mfig('GMM: Clustering'); clf; 
+figure('Name', 'GMM: Clustering', 'Position', [500 500 1100 800])
+
 clusterplot(X, y, i, X_c, Sigma_c);
+
+set(gca, 'FontSize', 18)
+
+title('GMM: Clustering', 'FontSize', 24)
+
+saveas(gcf, 'Plots/GMM_Clustering', 'epsc')
+
+
+
 
 fprintf('Best K value according to Xval: %d \n',bestK');
 
