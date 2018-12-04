@@ -129,20 +129,17 @@ density = gausKernelDensity(X,width);
 [sorted_GKN_density,GKN_density_index] = sort(density);
 
 % Plot outlier scores
-mfig('Gaussian Kernel Density: outlier score'); clf;
-bar(sorted_GKN_density(1:990));
+figure('Name', 'KDE','Position',[0 0, 950,800])
+bar(sorted_GKN_density(1:20));
 ylabel('Density');
-xlabel('Sorted GKN densities');
-% Plot possible outliers
-%mfig('Gaussian Kernel Density: Possible outliers'); clf;
-%for k = 1:990
-%    subplot(4,5,k);
-%    imagesc(reshape(X(i(k),:), 2, []));
-%    title(k);
-%    colormap(1-gray);
-%    axis image off;
-%end
+xticks([1:20]);
+xticklabels(GKN_density_index(1:20));
+xtickangle(45);
+xlabel('Sorted KDE densities');
+set(gca, 'FontSize', 12)
+title(sprintf('KDE\n width = 0.021582'), 'FontSize', 16)
 
+saveas(gcf, 'Plots/KDE', 'epsc')
 
 %% K-nearest neighbor density estimator
 
@@ -159,30 +156,38 @@ density = 1./(sum(D(:,2:end),2)/K);
 [sorted_KNN_density, KNN_density_index] = sort(density);
 
 % Plot outlier scores
-mfig('KNN density: outlier score'); clf;
-bar(sorted_KNN_density(1:990));
+figure('Name','KNN: Lowest 20 outlier score','Position',[0 0, 950,800]);
+bar(sorted_KNN_density(1:20));
+ylabel('Score');
+xticks([1:20]);
+xticklabels(KNN_density_index(1:20));
+xlabel('Sorted KNN score index');
+xtickangle(45);
+set(gca, 'FontSize', 12)
+title(sprintf('KNN: Lowest 20 outlier score\n K = %d',K), 'FontSize', 16)
+saveas(gcf, 'Plots/KNN', 'epsc')
 
-% Plot possible outliers
-%mfig('KNN density: Possible outliers'); clf;
-%for k = 1:20
-%    subplot(4,5,k);
-%    imagesc(reshape(X(i(k),:),2,[] ));
-%    title(sprintf('K = %d',k));
-%    colormap(1-gray);
-%    axis image off;
-%end
-
-% K-nearest neigbor average relative density
-% Compute the average relative density
+% AAAAAAAARD
 avg_rel_density=density./(sum(density(idx(:,2:end)),2)/K);
 
 % Sort the densities
 [sorted_avg_rel_density,avg_rel_density_index] = sort(avg_rel_density);
 
 % Plot outlier scores
-mfig('KNN average relative density: outlier score'); clf;
-bar(sorted_avg_rel_density(1:990));
+%mfig('KNN average relative density: outlier score'); clf;
+%bar(sorted_avg_rel_density(1:990));
 
+
+figure('Name','ARD: Lowest 20 outlier score','Position',[0 0, 950,800]);
+bar(sorted_avg_rel_density(1:20));
+ylabel('Score');
+xticks([1:20]);
+xticklabels(avg_rel_density_index(1:20));
+xtickangle(45);
+xlabel('Sorted ARD score index');
+set(gca, 'FontSize', 12)
+title(sprintf('ARD: Lowest 20 outlier score\n K = %d',K), 'FontSize', 16)
+saveas(gcf, 'Plots/ARD', 'epsc')
 % Plot possible outliers
 %mfig('KNN average relative density: Possible outliers'); clf;
 %for k = 1:20
@@ -224,8 +229,8 @@ Xbin = [Xbin, y_onehot];
 attributeNamesBin = [attributeNamesBin,cellstr(["y.1","y.2","y.3","y.4","y.5","y.6","y.7","y.8","y.9","y.10","y.11"])];
 %%
 % from ex12_1_6
-minSup = .1; % minimum support
-minConf = .90; % minmum confidence
+minSup = .09; % minimum support
+minConf = 0.95; % minmum confidence
 nRules = 100; % Max rules
 sortFlag = 1; % sorting of found rules (see doc)
 [rules, frequentItemSets] = findRules(Xbin, minSup, minConf, nRules, sortFlag);
