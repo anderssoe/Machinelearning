@@ -100,4 +100,4 @@ axis xy;
 
 set(gca, 'NextPlot', AxisNextPlot);
 
-if DoPCA, xlabel('PC1'); ylabel('PC2'); end;
+if DoPCA, xlabel('PCA-1'); ylabel('PCA-2'); end;

@@ -92,17 +92,25 @@ run('GMM.m');
 run('hierachical.m');
 
 
+title('Hierarchical clustering validity', 'FontSize', 20)
+
+xticklabels(LinkageType);
+xtickangle(45);
+
 %% plot evaluation of GMM & hierical
 
 [temp, BestHierachical] = max(h_Jaccard);
 
-figure('Name', 'Clustering validity')
+figure('Name', 'Clustering validity', 'Position', [500 500 800 500])
 H = bar([h_Rand(BestHierachical), gmm_Rand;
     h_Jaccard(BestHierachical), gmm_Jaccard;
     h_NMI(BestHierachical), gmm_NMI]);
 legend('Hierachical','GMM');
+set(gca, 'FontSize', 16)
+
 xticklabels({'Rand','Jaccard','NMI'});
 xtickangle(45);
+saveas(gcf, 'Plots/Eval_GMM_Hierachical', 'epsc')
 
 
 
